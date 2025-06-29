@@ -4,7 +4,7 @@ import AppError from "../interfaces/app-error";
 import Response from "../interfaces/response";
 import sendResponse from "../utils/send-response";
 
-const globalError: ErrorRequestHandler = (error, req, res, next) => {
+const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
   // default error response
   const errorResponse: Response<undefined> = {
     status: httpStatus.INTERNAL_SERVER_ERROR,
@@ -24,4 +24,4 @@ const globalError: ErrorRequestHandler = (error, req, res, next) => {
   sendResponse(res, errorResponse);
 };
 
-export default globalError;
+export default errorHandler;
