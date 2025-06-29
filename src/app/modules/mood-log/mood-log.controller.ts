@@ -21,6 +21,21 @@ const logMood = catchAsync(async (req: Request<{}, {}, MoodLog>, res) => {
   });
 });
 
+// get mood logs for the user
+const getMoodLogs = catchAsync(async (req, res) => {
+  // get user mood logs
+  const moodLogs = await moodLogServices.fetchMoodLogs(req.user.phoneNumber);
+
+  sendResponse(res, {
+    success: true,
+    status: httpStatus.OK,
+    message: "Mood logs are retrieved",
+    data: moodLogs,
+  });
+});
+
+
 export const moodLogControllers = {
   logMood,
+  getMoodLogs
 };

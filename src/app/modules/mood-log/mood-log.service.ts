@@ -35,6 +35,14 @@ const saveMoodLogToDB = async (phoneNumber: string, moodLog: IMoodLog) => {
   });
 };
 
+const fetchMoodLogs = async (phoneNumber: string) => {
+  // get user by phone number
+  const user = await User.getUserByPhoneNumber(phoneNumber)!;
+
+  return await MoodLog.find({ user: user._id });
+};
+
 export const moodLogServices = {
   saveMoodLogToDB,
+  fetchMoodLogs,
 };
