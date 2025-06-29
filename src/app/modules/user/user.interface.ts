@@ -1,5 +1,7 @@
+import { JwtPayload } from "jsonwebtoken";
 import { HydratedDocument, Model } from "mongoose";
 
+// raw user document
 export interface User {
   phoneNumber: string;
   password: string;
@@ -17,3 +19,11 @@ export interface UserModel extends Model<User, {}, UserMethods> {
     phoneNumber: string
   ): Promise<HydratedDocument<User, UserMethods>> | null;
 }
+
+
+// session payload
+export interface SessionPayload {
+  phoneNumber: string;
+}
+
+export type CustomJwtPayload = JwtPayload & SessionPayload;
