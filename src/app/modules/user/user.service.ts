@@ -1,5 +1,5 @@
 import AppError from "../../interfaces/app-error";
-import { User as IUser } from "./user.interface";
+import { User as IUser, SessionPayload } from "./user.interface";
 import { User } from "./user.model";
 import httpStatus from "http-status";
 
@@ -18,6 +18,29 @@ const saveUserToDB = async (user: IUser) => {
   return { phoneNumber: userDoc.phoneNumber };
 };
 
+// a successful authentication
+// will return the payload that will be used to create a session
+const authenticate = async ({ phoneNumber, password }: IUser) => {
+  // Step 1: Checking the user's existence in the db
+  const user = await User.getUserByPhoneNumber(phoneNumber);
+
+  if (!user) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid username or password');
+  }
+
+  // Step 3: Checking the login password
+  const isPasswordMatched = await user.checkPassword(password);
+  if (!isPasswordMatched) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid username or password');
+  }
+
+  // Step 4: return payload to create a session
+  const payload: SessionPayload = { phoneNumber };
+
+  return payload;
+};
+
 export const userServices = {
   saveUserToDB,
+  authenticate,
 };

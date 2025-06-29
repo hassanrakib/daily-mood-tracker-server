@@ -18,7 +18,7 @@ const encrypt = (
           reject(
             new AppError(
               httpStatus.INTERNAL_SERVER_ERROR,
-              'An error occurred during the registration process. Please try again later.'
+              'An error occurred during the process. Please try again later.'
             )
           );
         } else {
