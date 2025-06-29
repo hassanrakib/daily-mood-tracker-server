@@ -1,9 +1,9 @@
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import httpStatus from 'http-status';
-import 'dotenv/config'
-import errorHandler from './app/middlewares/error-handler';
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import httpStatus from "http-status";
+import "dotenv/config";
+import errorHandler from "./app/middlewares/error-handler";
 
 // express app instance
 const app = express();
@@ -19,11 +19,11 @@ app.use(
 );
 
 // root route
-app.get('/', (req, res) => {
-  res.status(httpStatus.OK).json({ message: 'Server is running!' });
+app.get("/", (req, res) => {
+  res.status(httpStatus.OK).json({ message: "Server is running!" });
 });
 
 // global error handler
-app.use(errorHandler);
+app.use(errorHandler());
 
 export default app;
