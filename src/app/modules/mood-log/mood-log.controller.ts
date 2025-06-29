@@ -58,6 +58,42 @@ const updateMoodLogById = catchAsync(
   }
 );
 
+// delete mood log by id
+const deleteMoodLogById = catchAsync(
+  async (req: Request<{ id?: string }, {}, {}>, res) => {
+    // get deleted mood log
+    const deletedMoodLog = await moodLogServices.removeMoodLogById(
+      req.params.id!,
+      req.user.phoneNumber
+    );
+
+    sendResponse(res, {
+      success: true,
+      status: httpStatus.OK,
+      message: "Mood log is deleted",
+      data: deletedMoodLog,
+    });
+  }
+);
+
+// restore mood log by id
+const restoreMoodLogById = catchAsync(
+  async (req: Request<{ id?: string }, {}, {}>, res) => {
+    // get restored mood log
+    const restoredMoodLog = await moodLogServices.reinstateMoodLogById(
+      req.params.id!,
+      req.user.phoneNumber
+    );
+
+    sendResponse(res, {
+      success: true,
+      status: httpStatus.OK,
+      message: "Mood log is restored",
+      data: restoredMoodLog,
+    });
+  }
+);
+
 const getCurrentStreakStatus = catchAsync(async (req, res) => {
   // get updated mood log
   const currentStreakStatus = await moodLogServices.knowCurrentStreakStatus(
@@ -90,6 +126,8 @@ export const moodLogControllers = {
   logMood,
   getMoodLogs,
   updateMoodLogById,
+  deleteMoodLogById,
+  restoreMoodLogById,
   getCurrentStreakStatus,
   getWeeklySummary,
 };

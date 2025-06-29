@@ -109,6 +109,74 @@ const modifyMoodLogById = async (
   });
 };
 
+const removeMoodLogById = async (moodLogId: string, phoneNumber: string) => {
+  // get user by phone number
+  const user = await User.getUserByPhoneNumber(phoneNumber)!;
+
+  // make sure moodLogId is valid
+  const moodLog = await MoodLog.findById(moodLogId);
+
+  if (!moodLog) {
+    throw new AppError(httpStatus.NOT_FOUND, "Mood log is not found");
+  }
+
+  // make sure only this users mood log is modified
+  if (String(user._id) !== String(moodLog.user)) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "You are not allowed to modify this mood log"
+    );
+  }
+
+  // if mood log deleted
+  if (moodLog.isDeleted) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Mood log is deleted");
+  }
+
+  return MoodLog.findByIdAndUpdate(
+    moodLogId,
+    { isDeleted: true },
+    {
+      runValidators: true,
+      new: true,
+    }
+  );
+};
+
+const reinstateMoodLogById = async (moodLogId: string, phoneNumber: string) => {
+  // get user by phone number
+  const user = await User.getUserByPhoneNumber(phoneNumber)!;
+
+  // make sure moodLogId is valid
+  const moodLog = await MoodLog.findById(moodLogId);
+
+  if (!moodLog) {
+    throw new AppError(httpStatus.NOT_FOUND, "Mood log is not found");
+  }
+
+  // make sure only this users mood log is modified
+  if (String(user._id) !== String(moodLog.user)) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "You are not allowed to modify this mood log"
+    );
+  }
+
+  // if mood log is not deleted
+  if (!moodLog.isDeleted) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Mood log is not deleted");
+  }
+
+  return MoodLog.findByIdAndUpdate(
+    moodLogId,
+    { isDeleted: false },
+    {
+      runValidators: true,
+      new: true,
+    }
+  );
+};
+
 const knowCurrentStreakStatus = async (phoneNumber: string) => {
   // get user by phone number
   const user = await User.getUserByPhoneNumber(phoneNumber)!;
@@ -155,7 +223,7 @@ const fetchWeeklySummary = async (phoneNumber: string) => {
   const sunday = endOfWeek(new Date(), { weekStartsOn: 1 });
 
   // get the mood summary for the week
-  const moodSummary = await MoodLog.aggregate<{_id: Moods, count: number}>([
+  const moodSummary = await MoodLog.aggregate<{ _id: Moods; count: number }>([
     // filter out documents that are within the week
     {
       $match: {
@@ -192,6 +260,8 @@ export const moodLogServices = {
   saveMoodLogToDB,
   fetchMoodLogs,
   modifyMoodLogById,
+  removeMoodLogById,
+  reinstateMoodLogById,
   knowCurrentStreakStatus,
   fetchWeeklySummary,
 };

@@ -15,4 +15,4 @@ export interface MoodLog {
   isDeleted: boolean;
 }
 
-export type MoodLogUpdate = Pick<MoodLog, "mood" | "note" | "isDeleted">;
+export type MoodLogUpdate = Pick<MoodLog, "mood" | "note">;
