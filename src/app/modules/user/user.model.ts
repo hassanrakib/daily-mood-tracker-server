@@ -53,4 +53,4 @@ userSchema.statics.getUserByPhoneNumber = async function (phoneNumber: string) {
   return this.findOne({ phoneNumber });
 };
 
-export const User = model<IUser>("User", userSchema);
+export const User = model<IUser, UserModel>("User", userSchema);
