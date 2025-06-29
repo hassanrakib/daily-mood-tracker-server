@@ -1,8 +1,8 @@
 import { CallbackError, model, Schema } from "mongoose";
-import { User as IUser } from "./user.interface";
+import { User as IUser, UserMethods, UserModel } from "./user.interface";
 import bcrypt from "bcrypt";
 
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema<IUser, UserModel, UserMethods>(
   {
     phoneNumber: {
       type: String,
