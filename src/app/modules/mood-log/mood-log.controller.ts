@@ -22,17 +22,19 @@ const logMood = catchAsync(async (req: Request<{}, {}, MoodLog>, res) => {
 });
 
 // get mood logs for the user
-const getMoodLogs = catchAsync(async (req, res) => {
-  // get user mood logs
-  const moodLogs = await moodLogServices.fetchMoodLogs(req.user.phoneNumber);
+const getMoodLogs = catchAsync(
+  async (req: Request<{}, {}, {}, { from?: string; to?: string }>, res) => {
+    // get user mood logs
+    const moodLogs = await moodLogServices.fetchMoodLogs(req.user.phoneNumber, req.query);
 
-  sendResponse(res, {
-    success: true,
-    status: httpStatus.OK,
-    message: "Moods are retrieved",
-    data: moodLogs,
-  });
-});
+    sendResponse(res, {
+      success: true,
+      status: httpStatus.OK,
+      message: "Moods are retrieved",
+      data: moodLogs,
+    });
+  }
+);
 
 // update mood log by id
 const updateMoodLogById = catchAsync(

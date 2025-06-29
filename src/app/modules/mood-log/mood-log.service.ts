@@ -1,4 +1,10 @@
-import { endOfToday, startOfDay, startOfToday, subDays } from "date-fns";
+import {
+  endOfDay,
+  endOfToday,
+  startOfDay,
+  startOfToday,
+  subDays,
+} from "date-fns";
 import { User } from "../user/user.model";
 import { MoodLog as IMoodLog, MoodLogUpdate } from "./mood-log.interface";
 import { MoodLog } from "./mood-log.model";
@@ -36,12 +42,30 @@ const saveMoodLogToDB = async (phoneNumber: string, moodLog: IMoodLog) => {
   });
 };
 
-const fetchMoodLogs = async (phoneNumber: string) => {
+const fetchMoodLogs = async (
+  phoneNumber: string,
+  query: { from?: string; to?: string }
+) => {
+  // construct date filter object
+  const dateFilter: { $gte?: Date; $lte?: Date } = {};
+
+  // update dateFilter object
+  if (query.from) {
+    dateFilter.$gte = new Date(query.from);
+  }
+
+  if (query.to) {
+    dateFilter.$lte = endOfDay(query.to);
+  }
+
   // get user by phone number
   const user = await User.getUserByPhoneNumber(phoneNumber)!;
 
   // sort by latest first
-  return await MoodLog.find({ user: user._id }).sort("-createdAt");
+  return await MoodLog.find({
+    user: user._id,
+    ...(query.from || query.to ? { date: dateFilter } : {}),
+  }).sort("-createdAt");
 };
 
 // update mood log
