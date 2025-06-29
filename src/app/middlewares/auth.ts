@@ -4,12 +4,22 @@ import { decrypt } from "../modules/user/user.util";
 import catchAsync from "../utils/catch-async";
 import httpStatus from "http-status";
 
+import { CustomJwtPayload } from "../modules/user/user.interface";
+
+declare global {
+  namespace Express {
+    interface Request {
+      // add 'user' property to the express Request interface
+      user: CustomJwtPayload;
+    }
+  }
+}
+
 // authorization middleware
 const auth = () => {
   return catchAsync(async (req, res, next) => {
     // Step 1: Get session cookie from the client side
-    const session = req.cookies['session'];
-    console.log(session);
+    const session = req.cookies.session;
 
     if (!session) {
       throw new AppError(

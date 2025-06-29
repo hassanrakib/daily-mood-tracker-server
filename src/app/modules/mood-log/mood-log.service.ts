@@ -28,6 +28,7 @@ const saveMoodLogToDB = async (phoneNumber: string, moodLog: IMoodLog) => {
 
   //  save mood log
   return await MoodLog.create({
+    ...moodLog,
     user: user._id,
     date: new Date(),
     isDeleted: false,

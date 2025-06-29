@@ -1,8 +1,9 @@
 import express from "express";
 import { moodLogControllers } from "./mood-log.controller";
+import auth from "../../middlewares/auth";
 
 const router = express.Router();
 
-router.post("/", moodLogControllers.logMood);
+router.post("/", auth(), moodLogControllers.logMood);
 
 export const moodLogRouter = router;
