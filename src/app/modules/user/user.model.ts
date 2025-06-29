@@ -6,13 +6,18 @@ const userSchema = new Schema<IUser, UserModel, UserMethods>(
   {
     phoneNumber: {
       type: String,
+      trim: true,
       required: true,
       unique: true,
       match: /^01[3-9]\d{8}$/,
     },
     password: {
       type: String,
+      trim: true,
       required: true,
+      match: /^(?=.*[A-Za-z])(?=.*\d).{8,}$/,
+      // omit password field in the query result
+      select: false,
     },
   },
   {

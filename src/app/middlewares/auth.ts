@@ -8,7 +8,7 @@ import httpStatus from "http-status";
 const auth = () => {
   return catchAsync(async (req, res, next) => {
     // Step 1: Get session cookie from the client side
-    const session = req.cookies();
+    const session = req.cookies['session'];
     console.log(session);
 
     if (!session) {
