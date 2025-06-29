@@ -1,6 +1,6 @@
 import { Request } from "express";
 import catchAsync from "../../utils/catch-async";
-import { MoodLog } from "./mood-log.interface";
+import { MoodLog, MoodLogUpdate } from "./mood-log.interface";
 import { moodLogServices } from "./mood-log.service";
 import sendResponse from "../../utils/send-response";
 import httpStatus from "http-status";
@@ -29,13 +29,32 @@ const getMoodLogs = catchAsync(async (req, res) => {
   sendResponse(res, {
     success: true,
     status: httpStatus.OK,
-    message: "Mood logs are retrieved",
+    message: "Moods are retrieved",
     data: moodLogs,
   });
 });
 
+// update mood log by id
+const updateMoodLogById = catchAsync(
+  async (req: Request<{ id?: string }, {}, MoodLogUpdate>, res) => {
+    // get updated mood log
+    const updatedMoodLog = await moodLogServices.modifyMoodLogById(
+      req.params.id!,
+      req.user.phoneNumber,
+      req.body
+    );
+
+    sendResponse(res, {
+      success: true,
+      status: httpStatus.OK,
+      message: "Mood is updated",
+      data: updatedMoodLog,
+    });
+  }
+);
 
 export const moodLogControllers = {
   logMood,
-  getMoodLogs
+  getMoodLogs,
+  updateMoodLogById,
 };
