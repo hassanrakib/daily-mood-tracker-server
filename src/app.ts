@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 // application routes
-app.use('/api/v1', router());
+app.use('/api/v1', router);
 
 // global error handler
 app.use(errorHandler());

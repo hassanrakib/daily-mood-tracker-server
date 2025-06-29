@@ -26,8 +26,6 @@ async function run() {
       console.log("Server is listening to the port => 5000");
     });
   } finally {
-    // Ensures that the client will close when you finish/error
-    await mongoose.disconnect();
   }
 }
 // catch any error and show it in the console

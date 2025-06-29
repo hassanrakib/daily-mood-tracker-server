@@ -22,7 +22,7 @@ const saveUserToDB = async (user: IUser) => {
 // will return the payload that will be used to create a session
 const authenticate = async ({ phoneNumber, password }: IUser) => {
   // Step 1: Checking the user's existence in the db
-  const user = await User.getUserByPhoneNumber(phoneNumber);
+  const user = await User.getUserByPhoneNumber(phoneNumber, true);
 
   if (!user) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid username or password');

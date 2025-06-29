@@ -16,10 +16,10 @@ export interface UserMethods {
 export interface UserModel extends Model<User, {}, UserMethods> {
   // static methods
   getUserByPhoneNumber(
-    phoneNumber: string
+    phoneNumber: string,
+    selectPassword?: boolean
   ): Promise<HydratedDocument<User, UserMethods>> | null;
 }
-
 
 // session payload
 export interface SessionPayload {

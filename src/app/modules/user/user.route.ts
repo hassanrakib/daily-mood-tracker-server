@@ -9,4 +9,4 @@ router.post("/register", userControllers.registerUser);
 // login user
 router.post("/login", userControllers.loginUser);
 
-export const userRouter = () => router;
+export const userRouter = router;

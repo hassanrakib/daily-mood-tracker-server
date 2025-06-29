@@ -53,7 +53,16 @@ userSchema.methods.checkPassword = async function (plainTextPassword: string) {
 };
 
 // static methods
-userSchema.statics.getUserByPhoneNumber = async function (phoneNumber: string) {
+userSchema.statics.getUserByPhoneNumber = async function (
+  phoneNumber: string,
+  selectPassword = false
+) {
+  // by defualt password is ommited when querying
+  if (selectPassword) {
+    // this refers to the User model
+    return this.findOne({ phoneNumber }).select("+password");
+  }
+
   // this refers to the User model
   return this.findOne({ phoneNumber });
 };
