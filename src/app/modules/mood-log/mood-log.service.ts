@@ -1,9 +1,10 @@
-import { endOfToday, startOfToday } from "date-fns";
+import { endOfToday, startOfDay, startOfToday, subDays } from "date-fns";
 import { User } from "../user/user.model";
 import { MoodLog as IMoodLog, MoodLogUpdate } from "./mood-log.interface";
 import { MoodLog } from "./mood-log.model";
 import AppError from "../../interfaces/app-error";
 import httpStatus from "http-status";
+import { getLastFourDaysStreakIncludingToday } from "./mood-log.util";
 
 // save mood log to db
 const saveMoodLogToDB = async (phoneNumber: string, moodLog: IMoodLog) => {
@@ -39,7 +40,8 @@ const fetchMoodLogs = async (phoneNumber: string) => {
   // get user by phone number
   const user = await User.getUserByPhoneNumber(phoneNumber)!;
 
-  return await MoodLog.find({ user: user._id });
+  // sort by latest first
+  return await MoodLog.find({ user: user._id }).sort("-createdAt");
 };
 
 // update mood log
@@ -77,8 +79,45 @@ const modifyMoodLogById = async (
   });
 };
 
+const knowCurrentStreakStatus = async (phoneNumber: string) => {
+  // get user by phone number
+  const user = await User.getUserByPhoneNumber(phoneNumber)!;
+
+  // start date of the day => 3 days ago
+  const fromDate = startOfDay(subDays(new Date(), 3));
+  // current date
+  const toDate = new Date();
+
+  // get the last 4 days data including today
+  const moodLogs = await MoodLog.find({
+    user: user._id,
+    date: { $gte: fromDate, $lte: toDate },
+  });
+
+  // convert iso long date strings to only date strings
+  const loggedDates = moodLogs.map((mood) =>
+    mood.date.toISOString().slice(0, 10)
+  );
+
+  // get the current streak
+  const isCurrentStreakMoreThanTwoDays =
+    getLastFourDaysStreakIncludingToday(loggedDates);
+
+  // if current streak more than two days
+  if (isCurrentStreakMoreThanTwoDays > 2) {
+    return {
+      showStreakBadge: true,
+    };
+  } else {
+    return {
+      showStreakBadge: false,
+    };
+  }
+};
+
 export const moodLogServices = {
   saveMoodLogToDB,
   fetchMoodLogs,
   modifyMoodLogById,
+  knowCurrentStreakStatus,
 };

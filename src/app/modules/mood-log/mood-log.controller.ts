@@ -53,8 +53,23 @@ const updateMoodLogById = catchAsync(
   }
 );
 
+const getCurrentStreakStatus = catchAsync(async (req, res) => {
+  // get updated mood log
+  const currentStreakStatus = await moodLogServices.knowCurrentStreakStatus(
+    req.user.phoneNumber
+  );
+
+  sendResponse(res, {
+    success: true,
+    status: httpStatus.OK,
+    message: "Current streak status retrieved",
+    data: currentStreakStatus,
+  });
+});
+
 export const moodLogControllers = {
   logMood,
   getMoodLogs,
   updateMoodLogById,
+  getCurrentStreakStatus,
 };
