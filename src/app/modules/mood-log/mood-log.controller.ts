@@ -25,7 +25,10 @@ const logMood = catchAsync(async (req: Request<{}, {}, MoodLog>, res) => {
 const getMoodLogs = catchAsync(
   async (req: Request<{}, {}, {}, { from?: string; to?: string }>, res) => {
     // get user mood logs
-    const moodLogs = await moodLogServices.fetchMoodLogs(req.user.phoneNumber, req.query);
+    const moodLogs = await moodLogServices.fetchMoodLogs(
+      req.user.phoneNumber,
+      req.query
+    );
 
     sendResponse(res, {
       success: true,
@@ -69,9 +72,24 @@ const getCurrentStreakStatus = catchAsync(async (req, res) => {
   });
 });
 
+const getWeeklySummary = catchAsync(async (req, res) => {
+  // get weekly summary of mood logs
+  const weeklySummary = await moodLogServices.fetchWeeklySummary(
+    req.user.phoneNumber
+  );
+
+  sendResponse(res, {
+    success: true,
+    status: httpStatus.OK,
+    message: "Weekly summary retrieved",
+    data: weeklySummary,
+  });
+});
+
 export const moodLogControllers = {
   logMood,
   getMoodLogs,
   updateMoodLogById,
   getCurrentStreakStatus,
+  getWeeklySummary,
 };

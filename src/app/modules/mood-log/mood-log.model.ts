@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { MoodLog as IMoodLog, Mood } from "./mood-log.interface";
+import { MoodLog as IMoodLog, Moods } from "./mood-log.interface";
 import { isToday } from "date-fns";
 
 const moodLogSchema = new Schema<IMoodLog>(
@@ -11,7 +11,7 @@ const moodLogSchema = new Schema<IMoodLog>(
     },
     mood: {
       type: String,
-      enum: Object.values(Mood),
+      enum: Object.values(Moods),
       required: true,
     },
     note: {

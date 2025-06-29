@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export enum Mood {
+export enum Moods {
   "Happy" = "Happy",
   "Sad" = "Sad",
   "Angry" = "Angry",
@@ -9,7 +9,7 @@ export enum Mood {
 
 export interface MoodLog {
   user: Types.ObjectId;
-  mood: Mood;
+  mood: Moods;
   date: Date;
   note?: string;
   isDeleted: boolean;

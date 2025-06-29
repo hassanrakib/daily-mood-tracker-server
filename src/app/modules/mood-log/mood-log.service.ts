@@ -1,12 +1,18 @@
 import {
   endOfDay,
   endOfToday,
+  endOfWeek,
   startOfDay,
   startOfToday,
+  startOfWeek,
   subDays,
 } from "date-fns";
 import { User } from "../user/user.model";
-import { MoodLog as IMoodLog, MoodLogUpdate } from "./mood-log.interface";
+import {
+  MoodLog as IMoodLog,
+  MoodLogUpdate,
+  Moods,
+} from "./mood-log.interface";
 import { MoodLog } from "./mood-log.model";
 import AppError from "../../interfaces/app-error";
 import httpStatus from "http-status";
@@ -115,6 +121,7 @@ const knowCurrentStreakStatus = async (phoneNumber: string) => {
   // get the last 4 days data including today
   const moodLogs = await MoodLog.find({
     user: user._id,
+    isDeleted: false,
     date: { $gte: fromDate, $lte: toDate },
   });
 
@@ -139,9 +146,52 @@ const knowCurrentStreakStatus = async (phoneNumber: string) => {
   }
 };
 
+const fetchWeeklySummary = async (phoneNumber: string) => {
+  // get user by phone number
+  const user = await User.getUserByPhoneNumber(phoneNumber)!;
+
+  // get current week's start monday & end sunday date
+  const monday = startOfWeek(new Date(), { weekStartsOn: 1 });
+  const sunday = endOfWeek(new Date(), { weekStartsOn: 1 });
+
+  // get the mood summary for the week
+  const moodSummary = await MoodLog.aggregate<{_id: Moods, count: number}>([
+    // filter out documents that are within the week
+    {
+      $match: {
+        user: user._id,
+        isDeleted: false,
+        date: { $gte: monday, $lte: sunday },
+      },
+    },
+    // group documents by mood
+    // and accumulate the number of documents for a mood
+    {
+      $group: {
+        _id: "$mood",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  // Structure result to include zero counts for missing moods
+  const allMoods = Object.values(Moods);
+
+  const result = allMoods.map((mood) => {
+    const found = moodSummary.find((item) => item._id === mood);
+    return {
+      mood,
+      count: found ? found.count : 0,
+    };
+  });
+
+  return result;
+};
+
 export const moodLogServices = {
   saveMoodLogToDB,
   fetchMoodLogs,
   modifyMoodLogById,
   knowCurrentStreakStatus,
+  fetchWeeklySummary,
 };
