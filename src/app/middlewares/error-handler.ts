@@ -2,6 +2,7 @@ import { ErrorRequestHandler } from "express";
 import httpStatus from "http-status";
 import AppError from "../interfaces/app-error";
 import Response from "../interfaces/response";
+import sendResponse from "../utils/send-response";
 
 const globalError: ErrorRequestHandler = (error, req, res, next) => {
   // default error response
@@ -20,7 +21,7 @@ const globalError: ErrorRequestHandler = (error, req, res, next) => {
   }
 
   // send the response
-  res.status(errorResponse.status).json(errorResponse);
+  sendResponse(res, errorResponse);
 };
 
 export default globalError;
