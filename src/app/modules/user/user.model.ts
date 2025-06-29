@@ -48,9 +48,9 @@ userSchema.methods.checkPassword = async function (plainTextPassword: string) {
 };
 
 // static methods
-userSchema.statics.getUserByUsername = async function (username: string) {
+userSchema.statics.getUserByPhoneNumber = async function (phoneNumber: string) {
   // this refers to the User model
-  return this.findOne({ username });
+  return this.findOne({ phoneNumber });
 };
 
 export const User = model<IUser>("User", userSchema);
