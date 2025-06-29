@@ -8,7 +8,7 @@ const userSchema = new Schema<IUser, UserModel, UserMethods>(
       type: String,
       required: true,
       unique: true,
-      match: /^(\+8801|01)[3-9]\d{8}$/,
+      match: /^01[3-9]\d{8}$/,
     },
     password: {
       type: String,
