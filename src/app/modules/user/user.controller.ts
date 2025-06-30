@@ -42,9 +42,21 @@ const loginUser = catchAsync(async (req: Request<{}, {}, User>, res) => {
   });
 });
 
+// get current logged in user
+const getCurrentUser = catchAsync(async (req, res) => {
+  // get the current user
+  const user = await userServices.fetchCurrentUser(req.user.phoneNumber);
 
+  sendResponse(res, {
+    success: true,
+    status: httpStatus.OK,
+    message: "User retrieved",
+    data: user,
+  });
+});
 
 export const userControllers = {
   registerUser,
   loginUser,
+  getCurrentUser,
 };

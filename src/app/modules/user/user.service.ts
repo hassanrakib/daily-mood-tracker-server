@@ -25,13 +25,13 @@ const authenticate = async ({ phoneNumber, password }: IUser) => {
   const user = await User.getUserByPhoneNumber(phoneNumber, true);
 
   if (!user) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid username or password');
+    throw new AppError(httpStatus.UNAUTHORIZED, "Invalid username or password");
   }
 
   // Step 3: Checking the login password
   const isPasswordMatched = await user.checkPassword(password);
   if (!isPasswordMatched) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid username or password');
+    throw new AppError(httpStatus.UNAUTHORIZED, "Invalid username or password");
   }
 
   // Step 4: return payload to create a session
@@ -40,7 +40,15 @@ const authenticate = async ({ phoneNumber, password }: IUser) => {
   return payload;
 };
 
+const fetchCurrentUser = async (phoneNumber: string) => {
+  // get user by phone number
+  const user = await User.getUserByPhoneNumber(phoneNumber);
+
+  return user;
+};
+
 export const userServices = {
   saveUserToDB,
   authenticate,
+  fetchCurrentUser,
 };
